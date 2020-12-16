@@ -151,3 +151,34 @@ func TestPermission_UnmarshalText(t *testing.T) {
 		}
 	}
 }
+
+func TestPermission_HasPermission(t *testing.T) {
+	p1 := []Permission{
+		mustFromString("-:a:c:f:h:e"),
+		mustFromString("+:a:c:f"),
+		mustFromString("-:a:c:*:h"),
+		mustFromString("+:a:c:*:*:d"),
+		mustFromString("+:a:b:d"),
+	}
+
+	for i, v := range []struct {
+		p   Permission
+		u   []Permission
+		has bool
+	}{
+		{mustFromString("a:c:f:g:d"), p1, true},
+		{mustFromString("a:c:f:g:e"), p1, true},
+		{mustFromString("a:c:f:h:d"), p1, true},
+		{mustFromString("a:c:f:h:e"), p1, false},
+		{mustFromString("a:c:i:g:d"), p1, true},
+		{mustFromString("a:c:i:g:e"), p1, false},
+		{mustFromString("a:c:i:h:d"), p1, false},
+		{mustFromString("a:c:i:h:e"), p1, false},
+		{mustFromString("a:b:d"), p1, true},
+		{mustFromString("a:b:e"), p1, false},
+	} {
+		if r := v.p.HasPermission(v.u); r != v.has {
+			t.Errorf("%d: Result not equals: %t(target) != %t(result)", i, v.has, r)
+		}
+	}
+}

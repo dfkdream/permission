@@ -81,6 +81,14 @@ func (p Permission) MatchNamespace(target Permission) bool {
 		}
 	}
 
-		return true
-	}()
+	return true
+}
+
+func (p Permission) HasPermission(permissions []Permission) bool {
+	for _, v := range permissions {
+		if v.MatchNamespace(p) {
+			return v.Allow && p.Allow
+		}
+	}
+	return false
 }
