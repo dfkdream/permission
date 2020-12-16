@@ -76,6 +76,7 @@ func TestPermission_HasPermission(t *testing.T) {
 		{mustFromString("hello"), mustFromString("-:hello"), false},
 		{mustFromString("hello:world"), mustFromString("hello:world"), true},
 		{mustFromString("hello:world"), mustFromString("hello:*"), true},
+		{mustFromString("hello:world"), mustFromString("hello"), true},
 		{mustFromString("hello:world"), mustFromString("*"), true},
 		{mustFromString("hello:world"), mustFromString("-:*"), false},
 		{mustFromString("hello:world:foo"), mustFromString("hello:*:foo"), true},
