@@ -70,23 +70,33 @@ func TestPermission_MatchNamespace(t *testing.T) {
 		uPerm Permission
 		has   bool
 	}{
-		{mustFromString("hello"), mustFromString("hello"), true},
-		{mustFromString("hello"), mustFromString("world"), false},
-		{mustFromString("-:hello"), mustFromString("hello"), false},
-		{mustFromString("hello"), mustFromString("-:hello"), false},
-		{mustFromString("hello:world"), mustFromString("hello:world"), true},
-		{mustFromString("hello:world"), mustFromString("hello:*"), true},
-		{mustFromString("hello:world"), mustFromString("hello"), true},
-		{mustFromString("hello:world"), mustFromString("*"), true},
-		{mustFromString("hello:world"), mustFromString("-:*"), false},
-		{mustFromString("hello:world:foo"), mustFromString("hello:*:foo"), true},
-		{mustFromString("hello:bar:foo"), mustFromString("hello:*:foo"), true},
-		{mustFromString("hello:bar:foo"), mustFromString("hello:*:bar"), false},
-		{mustFromString("hello"), mustFromString("hello:world"), false},
-		{mustFromString("hello"), mustFromString("hello:*"), false},
+		{mustFromString("a:c"), mustFromString("*"), true},
+		{mustFromString("a:c"), mustFromString("*:*"), true},
+		{mustFromString("a:c"), mustFromString("*:c"), true},
+		{mustFromString("a:c"), mustFromString("*:d"), false},
+		{mustFromString("a:c"), mustFromString("a:*"), true},
+		{mustFromString("a:c"), mustFromString("a:c"), true},
+		{mustFromString("a:c"), mustFromString("a:d"), false},
+		{mustFromString("a:c"), mustFromString("b"), false},
+		{mustFromString("a:d"), mustFromString("*"), true},
+		{mustFromString("a:d"), mustFromString("*:*"), true},
+		{mustFromString("a:d"), mustFromString("*:c"), false},
+		{mustFromString("a:d"), mustFromString("*:d"), true},
+		{mustFromString("a:d"), mustFromString("a:*"), true},
+		{mustFromString("a:d"), mustFromString("a:c"), false},
+		{mustFromString("a:d"), mustFromString("a:d"), true},
+		{mustFromString("a:d"), mustFromString("b"), false},
+		{mustFromString("b"), mustFromString("*"), true},
+		{mustFromString("b"), mustFromString("*:*"), false},
+		{mustFromString("b"), mustFromString("*:c"), false},
+		{mustFromString("b"), mustFromString("*:d"), false},
+		{mustFromString("b"), mustFromString("a:*"), false},
+		{mustFromString("b"), mustFromString("a:c"), false},
+		{mustFromString("b"), mustFromString("a:d"), false},
+		{mustFromString("b"), mustFromString("b"), true},
 	} {
-		if v.uPerm.HasPermission(v.sPerm) != v.has {
-			t.Errorf("%d: Validation Error: %t(target) != %t(result)", i, v.has, v.uPerm.HasPermission(v.sPerm))
+		if v.uPerm.MatchNamespace(v.sPerm) != v.has {
+			t.Errorf("%d: Validation Error: %t(target) != %t(result)", i, v.has, v.uPerm.MatchNamespace(v.sPerm))
 		}
 	}
 }
