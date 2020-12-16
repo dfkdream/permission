@@ -64,7 +64,7 @@ func mustFromString(p string) Permission {
 	return perm
 }
 
-func TestPermission_HasPermission(t *testing.T) {
+func TestPermission_MatchNamespace(t *testing.T) {
 	for i, v := range []struct {
 		sPerm Permission
 		uPerm Permission

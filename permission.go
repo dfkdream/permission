@@ -67,20 +67,19 @@ func FromString(s string) (Permission, error) {
 	return p, nil
 }
 
-func (p Permission) HasPermission(target Permission) bool {
-	return p.Allow && target.Allow && func() bool {
-		if len(p.Namespaces) > len(target.Namespaces) {
+func (p Permission) MatchNamespace(target Permission) bool {
+	if len(p.Namespaces) > len(target.Namespaces) {
+		return false
+	}
+
+	for i, v := range p.Namespaces {
+		if v == "*" {
+			continue
+		}
+		if v != target.Namespaces[i] {
 			return false
 		}
-
-		for i, v := range p.Namespaces {
-			if v == "*" {
-				continue
-			}
-			if v != target.Namespaces[i] {
-				return false
-			}
-		}
+	}
 
 		return true
 	}()
