@@ -12,10 +12,10 @@ func TestPermission_String(t *testing.T) {
 		p Permission
 		s string
 	}{
-		{p: Permission{Allow: true, Permissions: []string{"hello", "world"}}, s: "+:hello:world"},
-		{p: Permission{Allow: true, Permissions: []string{"*"}}, s: "+:*"},
-		{p: Permission{Allow: false, Permissions: []string{"hello", "world"}}, s: "-:hello:world"},
-		{p: Permission{Allow: false, Permissions: []string{"*"}}, s: "-:*"},
+		{p: Permission{Allow: true, Namespaces: []string{"hello", "world"}}, s: "+:hello:world"},
+		{p: Permission{Allow: true, Namespaces: []string{"*"}}, s: "+:*"},
+		{p: Permission{Allow: false, Namespaces: []string{"hello", "world"}}, s: "-:hello:world"},
+		{p: Permission{Allow: false, Namespaces: []string{"*"}}, s: "-:*"},
 	} {
 		if v.p.String() != v.s {
 			t.Errorf("%d: Result not equals: %s(target) != %s(result)", i, v.s, v.p.String())
@@ -95,10 +95,10 @@ func TestPermission_MarshalText(t *testing.T) {
 		p Permission
 		s []byte
 	}{
-		{p: Permission{Allow: true, Permissions: []string{"hello", "world"}}, s: []byte(`"+:hello:world"`)},
-		{p: Permission{Allow: true, Permissions: []string{"*"}}, s: []byte(`"+:*"`)},
-		{p: Permission{Allow: false, Permissions: []string{"hello", "world"}}, s: []byte(`"-:hello:world"`)},
-		{p: Permission{Allow: false, Permissions: []string{"*"}}, s: []byte(`"-:*"`)},
+		{p: Permission{Allow: true, Namespaces: []string{"hello", "world"}}, s: []byte(`"+:hello:world"`)},
+		{p: Permission{Allow: true, Namespaces: []string{"*"}}, s: []byte(`"+:*"`)},
+		{p: Permission{Allow: false, Namespaces: []string{"hello", "world"}}, s: []byte(`"-:hello:world"`)},
+		{p: Permission{Allow: false, Namespaces: []string{"*"}}, s: []byte(`"-:*"`)},
 	} {
 		res, err := json.Marshal(v.p)
 		if err != nil {
@@ -118,11 +118,11 @@ func TestPermission_UnmarshalText(t *testing.T) {
 		s []byte
 		e error
 	}{
-		{p: Permission{Allow: true, Permissions: []string{"hello", "world"}}, s: []byte(`"+:hello:world"`)},
-		{p: Permission{Allow: true, Permissions: []string{"*"}}, s: []byte(`"+:*"`)},
-		{p: Permission{Allow: false, Permissions: []string{"hello", "world"}}, s: []byte(`"-:hello:world"`)},
-		{p: Permission{Allow: false, Permissions: []string{"*"}}, s: []byte(`"-:*"`)},
-		{p: Permission{Allow: false, Permissions: []string{"*"}}, s: []byte(`""`), e: ErrInvalidSyntax},
+		{p: Permission{Allow: true, Namespaces: []string{"hello", "world"}}, s: []byte(`"+:hello:world"`)},
+		{p: Permission{Allow: true, Namespaces: []string{"*"}}, s: []byte(`"+:*"`)},
+		{p: Permission{Allow: false, Namespaces: []string{"hello", "world"}}, s: []byte(`"-:hello:world"`)},
+		{p: Permission{Allow: false, Namespaces: []string{"*"}}, s: []byte(`"-:*"`)},
+		{p: Permission{Allow: false, Namespaces: []string{"*"}}, s: []byte(`""`), e: ErrInvalidSyntax},
 	} {
 		var res Permission
 		err := json.Unmarshal(v.s, &res)

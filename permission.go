@@ -10,8 +10,8 @@ var (
 )
 
 type Permission struct {
-	Allow       bool
-	Permissions []string
+	Allow      bool
+	Namespaces []string
 }
 
 func (p Permission) Equals(target Permission) bool {
@@ -24,7 +24,7 @@ func (p Permission) String() string {
 			return "+"
 		}
 		return "-"
-	}() + ":" + strings.Join(p.Permissions, ":")
+	}() + ":" + strings.Join(p.Namespaces, ":")
 }
 
 func (p Permission) MarshalText() ([]byte, error) {
@@ -38,7 +38,7 @@ func (p *Permission) UnmarshalText(b []byte) error {
 	}
 
 	p.Allow = perm.Allow
-	p.Permissions = perm.Permissions
+	p.Namespaces = perm.Namespaces
 
 	return nil
 }
@@ -53,12 +53,12 @@ func FromString(s string) (Permission, error) {
 	}
 
 	if split[0] == "+" || split[0] == "-" {
-		p.Permissions = split[1:]
+		p.Namespaces = split[1:]
 	} else {
-		p.Permissions = split
+		p.Namespaces = split
 	}
 
-	for _, v := range p.Permissions {
+	for _, v := range p.Namespaces {
 		if v == "" {
 			return Permission{}, ErrInvalidSyntax
 		}
@@ -69,15 +69,15 @@ func FromString(s string) (Permission, error) {
 
 func (p Permission) HasPermission(target Permission) bool {
 	return p.Allow && target.Allow && func() bool {
-		if len(p.Permissions) > len(target.Permissions) {
+		if len(p.Namespaces) > len(target.Namespaces) {
 			return false
 		}
 
-		for i, v := range p.Permissions {
+		for i, v := range p.Namespaces {
 			if v == "*" {
 				continue
 			}
-			if v != target.Permissions[i] {
+			if v != target.Namespaces[i] {
 				return false
 			}
 		}
